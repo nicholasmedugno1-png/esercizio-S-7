@@ -98,23 +98,23 @@ function createLi(array, containerPadre) {
     ulBook.textContent = ''
     array.forEach((item) => {
         const newLi = document.createElement('li')
-        newLi.classList.add('d-flex', 'border', 'p-1', 'justify-content-center', 'align-items-center')
+        newLi.classList.add('d-flex', 'border', 'rounded', 'mt-2', 'p-1', 'text-start')
         const mydivTitle = document.createElement('div')
-
+mydivTitle.classList.add('ms-3')
         const myTitle = document.createElement('span');
         myTitle.textContent = `${item.title}`
-
         const myBadge = document.createElement('span')
         myBadge.textContent = item.dimensioni ? `${item.format} (${item.dimensioni} MB)` : `${item.format}`
         myBadge.classList.add('badge', 'bg-dark', 'ms-3',)
+
         const myYear = document.createElement('p')
         myYear.textContent = `${item.autore} - ${item.year}`
-        myYear.classList.add('text-muted', 'mt-3')
+        myYear.classList.add('text-muted', 'mt-auto')
         const myDivButtonUl = document.createElement('div')
-        myDivButtonUl.classList.add('ms-auto')
+        myDivButtonUl.classList.add('ms-auto', 'd-flex', 'flex-column', 'divPersonale')
         const btnElimina = document.createElement('button')
         btnElimina.textContent = 'Elimina'
-        btnElimina.classList.add('btn', 'btn-danger', 'ms-3')
+        btnElimina.classList.add('btn', 'btn-danger', 'ms-3', 'btnPersonal', 'mt-1')
 
 
 
@@ -129,7 +129,7 @@ function createLi(array, containerPadre) {
 
         const btnLetto = document.createElement('button')
         btnLetto.textContent = 'Letto'
-        btnLetto.classList.add('btn', 'btn-success')
+        btnLetto.classList.add('btn', 'btn-success', 'btnPersonal', 'ms-2')
 
         function aggiornaBtnLetto() {
             btnLetto.classList.toggle('btn-success', !item.letto)

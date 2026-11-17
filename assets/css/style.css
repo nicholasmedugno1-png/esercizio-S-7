@@ -6,3 +6,23 @@ header {
 .btn-primary {
     background-color: #203560;
 }
+
+.btnPersonal {
+    font-size: xx-small;
+    padding: 3px 5px;
+    margin-right: 5px;
+    font-size: xx-small;
+    justify-content: center;
+    align-self: center;
+}
+
+    @media (min-width: 768px) {
+    .divPersonale {
+        flex-direction: row !important;
+    }
+    .btnPersonal {
+    margin-top: 0px !important;
+    font-size: medium;
+}
+
+}
