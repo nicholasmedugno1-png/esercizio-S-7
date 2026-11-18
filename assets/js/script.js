@@ -1,6 +1,7 @@
 const btnAggiungi = document.querySelector('#btnAggiungi')
 const ulBook = document.querySelector('#ulBook')
-const myForm = document.querySelector('form')
+const myForm = document.querySelector('#myFormAggiunta')
+const myFormSearch = document.querySelector('#myFormSearch')
 const titleBook = document.querySelector('#titleBook')
 const autorBook = document.querySelector('#autorBook')
 const yearBook = document.querySelector('#yearBook')
@@ -9,6 +10,10 @@ const dimensioniBook = document.querySelector('#dimensioniBook')
 const inputDimensioni = document.querySelector('#inputDimensioni')
 const numBook = document.querySelector('#numBook')
 const svuotaLibri = document.querySelector('#svuotaLibri')
+const errore = document.querySelector("#errore");
+const myListaSearch = document.querySelector("#listaSearch");
+const SearcText = document.querySelector("#SearcText");
+
 
 class Book {
     static id
@@ -18,7 +23,7 @@ class Book {
         this.autore = _autore
         this.year = _year
         this.format = _format
-        this.letto = false
+        
     }
 
     segnaComeLetto() {
@@ -45,8 +50,8 @@ class DigitalBook extends Book {
     }
 }
 
-const myBook = caricaLibri()
-createLi(myBook, ulBook)
+
+
 
 function caricaLibri() {
     const datiSalvati = JSON.parse(localStorage.getItem('miaLibreria')) ?? []
@@ -58,8 +63,9 @@ function caricaLibri() {
         return libro
     })
 }
-
-
+const myBook = caricaLibri()
+const risultatiSearch = []
+createLi(myBook, ulBook)
 myForm.addEventListener('submit', (e) => {
     e.preventDefault()
     let book;
@@ -95,7 +101,7 @@ sectionFormat.addEventListener('change', () => {
 
 function createLi(array, containerPadre) {
     numBook.textContent = array.length
-    ulBook.textContent = ''
+    containerPadre.textContent = ''
     array.forEach((item) => {
         const newLi = document.createElement('li')
         newLi.classList.add('d-flex', 'border', 'rounded', 'mt-2', 'p-1', 'text-start')
@@ -121,7 +127,7 @@ mydivTitle.classList.add('ms-3')
         btnElimina.addEventListener('click', () => {
             const index = array.findIndex(element => element.id === item.id)
             array.splice(index, 1)
-            localStorage.setItem('miaLibreria', JSON.stringify(myBook))
+           salvaDati()
             
             createLi(array, containerPadre)
         })
@@ -140,8 +146,8 @@ mydivTitle.classList.add('ms-3')
         aggiornaBtnLetto()
         btnLetto.addEventListener('click', () => {
             item.segnaComeLetto()
-
-            localStorage.setItem('miaLibreria', JSON.stringify(myBook))
+            newLi.classList.toggle('liStyle')
+            salvaDati()
             aggiornaBtnLetto()
 
         })
@@ -159,9 +165,86 @@ mydivTitle.classList.add('ms-3')
 
 svuotaLibri.addEventListener('click', (e) => {
     myBook.length = 0
-    localStorage.setItem('miaLibreria', JSON.stringify(myBook))
+    salvaDati()
     createLi(myBook, ulBook)
 })
 
+function salvaDati() {
+    localStorage.setItem('miaLibreria', JSON.stringify(myBook))
+}
 
 
+function mostraSpinner() {
+  document.getElementById("spinner").hidden = false;
+  document.getElementById("errore").hidden = true;
+}
+
+function nascondiSpinner() {
+  document.getElementById("spinner").hidden = true;
+}
+
+function mostraErrore(msg) {
+  errore.textContent = msg;
+  errore.hidden = false;
+}
+
+
+  myFormSearch.addEventListener('submit', (e) => {
+    e.preventDefault()
+    
+    
+    const inputUtente = SearcText.value.trim()
+    
+    if (!inputUtente) {
+        mostraErrore("Inserisci un termine di ricerca valido.")
+        return
+    }
+
+    mostraSpinner()
+
+  fetch(`https://openlibrary.org/search.json?q=${inputUtente}&limit=10`)
+  .then(response => response.json())
+  .then(dati => {
+    risultatiSearch.length = 0;
+    risultatiSearch.push(...dati.docs);
+    console.log(risultatiSearch);
+    
+  })
+  .catch(error => {
+            nascondiSpinner()
+            mostraErrore(error.message)
+        }).finally(() => {
+            nascondiSpinner()
+            creaLiSearch(risultatiSearch, myListaSearch)
+        })
+
+})
+
+function creaLiSearch(array, containerPadre) {
+containerPadre.textContent = ''
+    array.forEach((item) => {
+        const newLi = document.createElement('li')
+        newLi.classList.add('d-flex', 'border', 'rounded', 'mt-2', 'p-1', 'text-start')
+        const mydivTitle = document.createElement('div')
+mydivTitle.classList.add('ms-3')
+        const myTitle = document.createElement('span');
+        myTitle.textContent = `${item.title}`
+        const myYear = document.createElement('p')
+        myYear.textContent = `${item.author_name} - ${item.first_publish_year}`
+        myYear.classList.add('text-muted', 'mt-auto')
+        const myDivButtonUl = document.createElement('div')
+        myDivButtonUl.classList.add('ms-auto', 'd-flex', 'flex-column', 'divPersonale')
+        const btnAggiungi = document.createElement('button')
+        btnAggiungi.textContent = 'Aggiugni'
+        btnAggiungi.classList.add('btn', 'btn-success', 'ms-3', 'btnPersonal', 'mt-1')
+
+
+        btnAggiungi.addEventListener('click', (e) => {
+           
+        })
+        mydivTitle.append(myTitle, myYear)
+        myDivButtonUl.append( btnAggiungi)
+        newLi.append(mydivTitle, myDivButtonUl)
+        containerPadre.append(newLi)
+    });
+}

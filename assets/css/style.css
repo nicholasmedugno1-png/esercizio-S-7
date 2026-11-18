@@ -16,7 +16,31 @@ header {
     align-self: center;
 }
 
-    @media (min-width: 768px) {
+   #ulBook {
+    
+    li{
+        border-left: 2px solid blue ;
+        
+    }
+
+}
+
+.liStyle {
+    border-left: 2px solid green !important;
+}
+
+.btnPersonalSearch {
+    border: none;
+    padding: 2px 8px;
+    border-radius: 5px;
+    background-color: #203560;
+    color: white;
+    
+}
+
+
+
+@media (min-width: 768px) {
     .divPersonale {
         flex-direction: row !important;
     }
